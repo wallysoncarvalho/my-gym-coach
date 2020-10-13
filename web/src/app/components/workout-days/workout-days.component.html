@@ -1,0 +1,39 @@
+<p-accordion (onOpen)="getWorkoutDayExercises($event)" [activeIndex]="accordionDay">
+
+  <p-accordionTab header="Monday">
+    <div *ngFor="let exercise of monday" class="exercise">
+      <img src="../../../assets/images/90x90.png">
+      <div class="exercise__info">
+        <p><strong>Name:</strong> {{exercise.name}}</p>
+        <p><strong>Repetition per set:</strong> {{exercise.repetitionPerSet}}</p>
+        <p><strong>Rest time:</strong> {{exercise.restTime}}</p>
+        <p><strong>Sets:</strong> {{exercise.sets}}</p>
+      </div>
+    </div>
+  </p-accordionTab>
+
+  <p-accordionTab header="Tuesday">
+    <div *ngFor="let exercise of tuesday" class="exercise">
+      <img src="../../../assets/images/90x90.png">
+      <div class="exercise__info">
+        <p><strong>Name:</strong> {{exercise.name}}</p>
+        <p><strong>Repetition per set:</strong> {{exercise.repetitionPerSet}}</p>
+        <p><strong>Rest time:</strong> {{exercise.restTime}}</p>
+        <p><strong>Sets:</strong> {{exercise.sets}}</p>
+      </div>
+    </div>
+  </p-accordionTab>
+
+  <p-accordionTab header="Wednesday">
+    <p>asdasdasda dasdas</p>
+  </p-accordionTab>
+
+  <p-accordionTab header="Thursday">
+    <p>asdasdasda dasdas</p>
+  </p-accordionTab>
+
+  <p-accordionTab header="Friday">
+    <p>asdasdasda dasdas</p>
+  </p-accordionTab>
+
+</p-accordion>

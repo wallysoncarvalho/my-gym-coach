@@ -1,0 +1,41 @@
+<h2 class="component-title">Exercises</h2>
+
+<form class="exercise_form" [formGroup]="exerciseForm" (ngSubmit)="addExercise(exerciseForm.value)">
+  <div class="form__item">
+    <p-multiSelect defaultLabel="Muscles" [style]="{'width': '200px'}" [options]="muscles"
+      formControlName="muscles" optionLabel="name">
+    </p-multiSelect>
+  </div>
+  <div class="form__item">
+    <label for="fieldId">Exercise name: </label>
+    <input formControlName="name" type="text" pInputText>
+  </div>
+  <div class="form__item">
+    <label for="fieldId">Exercise description: </label>
+    <input formControlName="description" type="text" pInputText>
+  </div>
+  <button pButton type="submit" label="Submit"></button>
+</form>
+
+<p-table [columns]="exerciseTableColumns" [value]="exercises" [paginator]="true" [rows]="tableRows" [style]="{'font-size': 'smaller'}">
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th *ngFor="let col of columns">
+        {{col.header}}
+      </th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <tr>
+      <td *ngFor="let col of columns">
+        {{rowData[col.field]}}
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="summary">
+    There are {{exercises?.length}} exercises registered.
+  </ng-template>
+
+</p-table>

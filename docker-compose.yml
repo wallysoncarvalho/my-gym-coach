@@ -1,0 +1,62 @@
+version: "3.6"
+services:
+  api:
+    build: ./api
+    image: mgc-api:1.0
+    container_name: mgc-api
+    restart: unless-stopped
+    environment:
+      - DB_URL=jdbc:postgresql://db:5432/mgc
+      - DB_USER=wally
+      - DB_PWD=password
+      - EXERCISE_PATH=/tmp
+    ports:
+      - "8090:8090"
+    depends_on:
+      - db
+      # - auth
+    networks:
+      - backend
+
+  db:
+    image: postgres:12-alpine
+    restart: unless-stopped
+    container_name: mgc-db
+    environment:
+      - POSTGRES_USER=wally
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=mgc
+    ports:
+      - "5432:5432"
+    volumes:
+      - backend
+    networks:
+      - backend
+  
+  # auth:
+  #   image: jboss/keycloak:11.0.0
+  #   restart: unless-stopped
+  #   container_name: mgc-auth
+  #   ports:
+  #     - "8089:8080"
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     - KEYCLOAK_USER=admin
+  #     - KEYCLOAK_PASSWORD=123
+  #     - DB_VENDOR = postgres
+  #     - DB_ADDR=postgresql
+  #     - DB_PORT=5432
+  #     - DB_DATABASE=mgc
+  #     - DB_SCHEMA=keycloak
+  #     - DB_USER=wally
+  #     - DB_PASSWORD=password
+  #   networks:
+  #     - backend
+
+networks:
+  # frontend:
+  backend:
+
+volumes:
+  mgc-db:

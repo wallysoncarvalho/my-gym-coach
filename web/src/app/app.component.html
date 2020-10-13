@@ -1,0 +1,71 @@
+<p-toast position="top-right"></p-toast>
+<p-blockUI [blocked]="blockuiMsg.blockui">
+  <div class="blockui blockui-align">
+    <div class="blockui__panel blockui-align">
+      <img class="blockui__img" [src]="blockuiMsg.imgUrl">
+      <p>{{blockuiMsg.message}}</p>
+      <button pButton type="button" label="Close" icon="pi pi-times" (click)="closeBlockUi()"
+        class="ui-button-info blockui__btn"></button>
+    </div>
+  </div>
+</p-blockUI>
+
+<div class="topnav">
+  <button (click)="hideSideNav = !hideSideNav"><span>&#9776;</span></button>
+  <div class="sidenav__logo">
+    <a routerLink="/" title="Go to home 🏚">
+      MY <img src="assets/images/dumbbell.svg" width="25px" /> GYM COACH
+    </a>
+  </div>
+</div>
+
+<!-- LEFT SIDE NAVIGATION -->
+<aside class="sidenav" [ngClass]="hideSideNav ? 'sidenav--opened' : 'sidenav--closed'">
+
+  <div class="sidenav__logo">
+    <a routerLink="/" title="Go to home 🏚">
+      MY <img src="assets/images/dumbbell.svg" width="25px" /> GYM COACH
+    </a>
+  </div>
+
+  <ul class="sidenav__menu">
+    <li (click)="hideSideNav = !hideSideNav" routerLinkActive="sidenav__manu-active"
+      [routerLinkActiveOptions]="{exact: true}">
+      <a routerLink="available-coaches"><i class="pi pi-arrow-right">
+        </i>Available Coaches</a>
+    </li>
+
+    <li (click)="hideSideNav = !hideSideNav" routerLinkActive="sidenav__manu-active">
+      <a routerLink="workout-plans">
+        <i class="pi pi-arrow-right"></i>Workout Plans
+      </a>
+    </li>
+
+    <li><a href="#"><i class="pi pi-arrow-right"></i> dasd adasd</a></li>
+    <li><a routerLink="exercises"><i class="pi pi-arrow-right"></i>Exercises</a></li>
+
+  </ul>
+
+  <div class="sidenav__footer">
+    <p><i class="pi pi-user"></i>{{username}}</p>
+    <a (click)="logout()"><i class="pi pi-power-off"></i> Exit </a>
+  </div>
+
+</aside>
+
+<div class="loader" *ngIf="showProgressBar">
+  <p-progressBar mode="indeterminate" [style]="{'height': '3px', 'border-radius': '0'}">
+  </p-progressBar>
+</div>
+
+<!-- CONTENT OF THE PAGE WILL BE DISPLAYED HERE -->
+<div class="main__container">
+
+  <div class="main__body">
+    <router-outlet></router-outlet>
+  </div>
+
+
+
+
+</div>

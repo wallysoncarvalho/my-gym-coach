@@ -1,0 +1,31 @@
+<h2 class="component-title">Available coaches</h2>
+
+<p-table [value]="availableCoaches" [style]="{'font-size': 'smaller'}">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Name</th>
+      <th>Date of Register</th>
+      <th>Athletes Coached</th>
+      <th></th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-coach>
+    <tr [style]="{'text-align': 'center'}">
+      <td>{{coach.name}}</td>
+      <td>{{coach.coachSince | dateFormat}}</td>
+      <td>{{coach.athletesCoached}}</td>
+      <td>
+        <p-button *ngIf="!coach.isWorkoutPending" label="Hire Coach" icon="pi pi-check"
+          iconPos="left" styleClass="ui-button-raised ui-button-rounded"
+          (onClick)="createWorkoutPlan(coach.id)" [style]="{'font-size': 'smaller'}">
+        </p-button>
+
+        <p-button *ngIf="coach.isWorkoutPending" label="Cancel" icon="pi pi-times"
+          styleClass="ui-button-raised ui-button-rounded ui-button-danger"
+          (onClick)="cancelCreationWorkoutPlan(coach.id)" [style]="{'font-size': 'smaller'}">
+        </p-button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

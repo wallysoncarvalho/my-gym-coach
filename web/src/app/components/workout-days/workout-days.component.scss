@@ -1,0 +1,16 @@
+.exercise {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+
+  img {
+    margin-right: 10px;
+  }
+}
+
+.exercise__info {
+  p {
+    font-size: 12px;
+  }
+}

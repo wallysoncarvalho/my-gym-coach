@@ -1,0 +1,50 @@
+server:
+  port: 8090
+  error:
+    whitelabel:
+      enabled: false
+
+# logging:
+#   level:
+#     root: WARN
+
+spring:
+  main:
+    banner-mode: off
+  application:
+    name: MGC_API
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 5MB
+  thymeleaf:
+    check-template-location: false
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/mgc}
+    platform: postgres
+    username: ${DB_USER:wally}
+    password: ${DB_PWD:password}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+      show_sql: true
+      format_sql: true
+  jackson:
+    default-property-inclusion: NON_NULL
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+#  data:
+#    web:
+#      pageable:
+#        default-page-size: 10
+#        max-page-size: 10
+
+exercise:
+  path: ${EXERCISE_PATH:C:\Users\Wallyson\Desktop}

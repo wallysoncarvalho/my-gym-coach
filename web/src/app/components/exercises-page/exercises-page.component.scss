@@ -1,0 +1,18 @@
+.exercise_form {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: 10px;
+
+  button {
+    margin-top: 10px;
+  }
+}
+
+.form__item {
+  display: flex;
+  flex-direction: column;
+  max-width: 200px;
+  margin-right: 8px;
+}

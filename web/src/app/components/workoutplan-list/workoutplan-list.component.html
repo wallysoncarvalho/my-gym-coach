@@ -1,0 +1,32 @@
+<h2 class="component-title">Workout Plans</h2>
+
+<p-confirmDialog #cd header="Confirmation" acceptButtonStyleClass="ui-button-info"
+  rejectButtonStyleClass="ui-button-danger">
+</p-confirmDialog>
+
+<p-table [value]="workoutPlanList" [style]="{'font-size': 'smaller'}">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Coach</th>
+      <th>Athlete</th>
+      <th>Creation</th>
+      <th>Expiration</th>
+      <th>Status</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-wkplan>
+    <tr class="row" (click)="wkplan.wkStatus === 'ACTIVE'? '' : acceptOrDenyHire(wkplan.id)"
+      [routerLink]="wkplan.wkStatus === 'ACTIVE'? ['/workout-plan', wkplan.id]: null">
+      <td>{{wkplan.coachName}}</td>
+      <td>{{wkplan.athleteName}}</td>
+      <td>{{wkplan.creationDate | dateFormat}}</td>
+      <td>{{wkplan.expirationDate | dateFormat}}</td>
+      <td>{{wkplan.wkStatus}}</td>
+    </tr>
+  </ng-template>
+
+
+</p-table>
+
+<!-- <app-workout-item></app-workout-item> -->
