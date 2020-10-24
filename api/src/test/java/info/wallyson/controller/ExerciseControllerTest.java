@@ -133,30 +133,52 @@ class ExerciseControllerTest {
   @DisplayName(
       "Should upload JPEG images to local folder. Returns uploaded images and download link.")
   void should_upload_images_to_local_folder() throws Exception {
-    when(exerciseService.storeImages(any()))
-        .thenReturn(
-            List.of(
-                "91a757a5-e05d-4014-ae92-bfe07c871aaa",
-                "5bbf4f87-bddc-4b6d-a673-06e61f5ba11b",
-                "c553df8f-9f5d-4861-95ca-fd7c0a82f9ea"));
+    var image1 =
+        new MockMultipartFile("images", "image-name.jpg", "image/jpeg", "somecontent".getBytes());
 
+    when(exerciseService.storeImages(List.of(image1)))
+        .thenReturn(List.of("91a757a5-e05d-4014-ae92-bfe07c871aaa"));
+
+    var result =
+        this.mockMvc
+            .perform(multipart("/api/v1/exercises/images").file(image1))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    verify(exerciseService, times(1)).storeImages(List.of(image1));
+    var strResponse = result.getResponse().getContentAsString();
+    var imagesList = mapper.readValue(strResponse, ExerciseImageDTO[].class);
+
+    assertEquals(1, imagesList.length);
+    assertFalse(imagesList[0].getName().isBlank());
+    assertFalse(imagesList[0].getUrl().isBlank());
+  }
+
+  @Test
+  @DisplayName("Should fail to upload an image with empty content")
+  void should_fail_to_upload_due_to_empty_content() throws Exception {
     var image1 = new MockMultipartFile("images", "image-name.jpg", "image/jpeg", "".getBytes());
 
     var result =
         this.mockMvc
-            .perform(
-                multipart("/api/v1/exercises/images")
-                    .file(image1)
-                    .contentType(MediaType.IMAGE_JPEG))
-            .andExpect(status().isOk())
+            .perform(multipart("/api/v1/exercises/images").file(image1))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists())
+            .andExpect(jsonPath("$.errors").isArray())
             .andReturn();
+  }
 
-    verify(exerciseService, times(1)).storeImages(any());
-    var strResponse = result.getResponse().getContentAsString();
-    var imagesList = mapper.readValue(strResponse, ExerciseImageDTO[].class);
+  @Test
+  @DisplayName("Should fail to upload an image with content different from JPEG, JPG or PNG")
+  void should_fail_to_upload_due_to_invalid_content_type() throws Exception {
+    var image1 = new MockMultipartFile("images", "file.txt", "text/plain", "".getBytes());
 
-    assertEquals(3, imagesList.length);
-    assertFalse(imagesList[0].getName().isBlank());
-    assertFalse(imagesList[0].getUrl().isBlank());
+    var result =
+        this.mockMvc
+            .perform(multipart("/api/v1/exercises/images").file(image1))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists())
+            .andExpect(jsonPath("$.errors").isArray())
+            .andReturn();
   }
 }

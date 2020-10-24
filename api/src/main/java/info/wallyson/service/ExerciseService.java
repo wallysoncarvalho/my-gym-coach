@@ -4,6 +4,8 @@ import info.wallyson.dto.ExerciseDTO;
 import info.wallyson.entity.Exercise;
 import info.wallyson.exception.ApiException;
 import info.wallyson.repository.ExerciseRepository;
+
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -51,22 +53,24 @@ public class ExerciseService {
     // if list is empty return an empty list
 
     return images.stream()
+        .filter(mp -> !mp.isEmpty())
         .map(this::storeFileOnLocation)
         .filter(Strings::isNotBlank)
         .collect(Collectors.toList());
   }
 
   private String storeFileOnLocation(MultipartFile multipartFile) {
-    var name = "";
+    var path = Paths.get(this.imageDir).toAbsolutePath().normalize();
 
     try {
-      name = UUID.randomUUID().toString();
-      var path = Paths.get(this.imageDir).toAbsolutePath().normalize();
+      var name = UUID.randomUUID().toString();
       Files.copy(multipartFile.getInputStream(), path.resolve(name));
-    } catch (Exception e) {
-      log.error("Error while saving multipartFile {}", multipartFile.getOriginalFilename());
+      return name;
+    } catch (IOException e) {
+      log.error("Error while saving file on path: {}", path.toString());
+      throw ApiException.fromApiError(
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          "An error occurred on our servers while trying to save the images!");
     }
-
-    return name;
   }
 }
