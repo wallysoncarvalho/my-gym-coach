@@ -3,7 +3,6 @@ package info.wallyson.controller;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -161,12 +160,12 @@ class ExerciseControllerTest {
   void should_fail_to_upload_due_to_empty_content() throws Exception {
     var image1 = new MockMultipartFile("images", "image-name.jpg", "image/jpeg", "".getBytes());
 
-        this.mockMvc
-            .perform(multipart("/api/v1/exercises/images").file(image1))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists())
-            .andExpect(jsonPath("$.errors").isArray())
-            .andReturn();
+    this.mockMvc
+        .perform(multipart("/api/v1/exercises/images").file(image1))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").exists())
+        .andExpect(jsonPath("$.errors").isArray())
+        .andReturn();
   }
 
   @Test
@@ -174,12 +173,12 @@ class ExerciseControllerTest {
   void should_fail_to_upload_due_to_invalid_content_type() throws Exception {
     var image1 = new MockMultipartFile("images", "file.txt", "text/plain", "".getBytes());
 
-        this.mockMvc
-            .perform(multipart("/api/v1/exercises/images").file(image1))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists())
-            .andExpect(jsonPath("$.errors").isArray())
-            .andReturn();
+    this.mockMvc
+        .perform(multipart("/api/v1/exercises/images").file(image1))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").exists())
+        .andExpect(jsonPath("$.errors").isArray())
+        .andReturn();
   }
 
   @Test
@@ -188,11 +187,11 @@ class ExerciseControllerTest {
     byte[] bytes = new byte[1024 * 1024 * 10];
     var image = new MockMultipartFile("images", "image.jpg", "image/jpeg", bytes);
 
-        this.mockMvc
-            .perform(multipart("/api/v1/exercises/images").file(image))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists())
-            .andExpect(jsonPath("$.errors").isArray())
-            .andReturn();
+    this.mockMvc
+        .perform(multipart("/api/v1/exercises/images").file(image))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").exists())
+        .andExpect(jsonPath("$.errors").isArray())
+        .andReturn();
   }
 }
