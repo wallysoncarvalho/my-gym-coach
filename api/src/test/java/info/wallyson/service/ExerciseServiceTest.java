@@ -68,7 +68,8 @@ class ExerciseServiceTest {
 
   @Test
   @DisplayName(
-      "Should throw error when trying to create an exercise that has the same name that an existing exercise")
+      "Should throw error when trying to create an exercise that has the same name that an"
+          + " existing exercise")
   void should_throw_error_when_creating_exercise_with_existing_name() {
     var exerciseDTO = ExerciseDTO.builder().name("exercise").build();
     when(this.exerciseRepository.existsByName("exercise")).thenReturn(true);

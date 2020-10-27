@@ -1,18 +1,14 @@
 package info.wallyson.exception;
 
+import java.util.stream.Collectors;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.servlet.NoHandlerFoundException;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GeneralExceptionHandler {
@@ -45,8 +41,7 @@ public class GeneralExceptionHandler {
 
   @ExceptionHandler({Exception.class})
   public ResponseEntity<ApiError> handleAll(Exception ex, WebRequest request) {
-    var apiError =
-        new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "");
+    var apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "");
 
     return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
   }

@@ -1,10 +1,9 @@
 package info.wallyson.validations.exerciseimage;
 
-import org.springframework.web.multipart.MultipartFile;
-
+import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 public class ExerciseImageTypeValidator
     implements ConstraintValidator<ValidExerciseImage, List<MultipartFile>> {

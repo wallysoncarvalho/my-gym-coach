@@ -4,7 +4,6 @@ import info.wallyson.dto.ExerciseDTO;
 import info.wallyson.entity.Exercise;
 import info.wallyson.exception.ApiException;
 import info.wallyson.repository.ExerciseRepository;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;

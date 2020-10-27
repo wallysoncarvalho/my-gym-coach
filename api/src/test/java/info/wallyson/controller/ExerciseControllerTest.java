@@ -92,7 +92,8 @@ class ExerciseControllerTest {
 
   @Test
   @DisplayName(
-      "Make POST request to create a new exercise. Returns created exercise with ID and HTTP status 201")
+      "Make POST request to create a new exercise. Returns created exercise with ID and HTTP"
+          + " status 201")
   void should_create_new_exercise_and_return() throws Exception {
     when(exerciseService.createExercise(any(ExerciseDTO.class)))
         .thenReturn(ExerciseDTOFactory.exercise().toEntity());
@@ -115,7 +116,8 @@ class ExerciseControllerTest {
 
   @Test
   @DisplayName(
-      "Returns validation error when trying to create a new exercise with blank name and get HTTP status 400")
+      "Returns validation error when trying to create a new exercise with blank name and get HTTP"
+          + " status 400")
   void should_return_validation_error() throws Exception {
     var result =
         this.mockMvc
