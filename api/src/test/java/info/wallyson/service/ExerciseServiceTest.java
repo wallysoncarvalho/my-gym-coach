@@ -77,23 +77,61 @@ class ExerciseServiceTest {
   }
 
   @Test
+  @DisplayName("Should return an empty string array when there's no image provided")
+  void should_return_empty_list_when_no_image_provided(@TempDir Path tempDir) {
+    var service = new ExerciseService(null, tempDir.toString());
+    List<MultipartFile> images = List.of();
+    var createdImagesNames = service.storeImages(images);
+    assertEquals(0, createdImagesNames.size());
+  }
+
+  @Test
   @DisplayName("Should store images on local storage")
   void should_store_images_on_local_storage(@TempDir Path tempDir) {
     var service = new ExerciseService(null, tempDir.toString());
 
     List<MultipartFile> images =
         List.of(
-            new MockMultipartFile("image-name.jpg", "".getBytes()),
-            new MockMultipartFile("image-name.jpg", "".getBytes()),
-            new MockMultipartFile("image-name.jpg", "".getBytes()));
+            new MockMultipartFile("image-name.jpg", "content_of_image".getBytes()),
+            new MockMultipartFile("image-name.jpg", "content_of_image".getBytes()));
 
     var createdImagesNames = service.storeImages(images);
 
-    assertEquals(3, createdImagesNames.size());
+    assertEquals(2, createdImagesNames.size());
 
     createdImagesNames.forEach(
         name -> {
           assertTrue(Files.exists(tempDir.resolve(name)));
         });
+  }
+
+  @Test
+  @DisplayName("Should ignore empty multipart content")
+  void should_ignore_empty_multipart_content(@TempDir Path tempDir) {
+    var service = new ExerciseService(null, tempDir.toString());
+
+    List<MultipartFile> images =
+        List.of(
+            new MockMultipartFile("image-name.jpg", "images content".getBytes()),
+            new MockMultipartFile("image-name.jpg", "images content".getBytes()),
+            new MockMultipartFile("image-name.jpg", "".getBytes()));
+
+    var createdImagesNames = service.storeImages(images);
+
+    assertEquals(2, createdImagesNames.size());
+
+    createdImagesNames.forEach(
+        name -> {
+          assertTrue(Files.exists(tempDir.resolve(name)));
+        });
+  }
+
+  @Test
+  @DisplayName("Should throw api exception while trying to save file on invalid path")
+  void should_throw_exception_while_storing_image_on_invalid_path() {
+    var service = new ExerciseService(null, "//a/dad//asd/invalid/path");
+    List<MultipartFile> image =
+        List.of(new MockMultipartFile("image-name.jpg", "images content".getBytes()));
+    assertThrows(ApiException.class, () -> service.storeImages(image));
   }
 }

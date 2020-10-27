@@ -15,7 +15,7 @@ spring:
     name: MGC_API
   servlet:
     multipart:
-      max-file-size: 1MB
+#      max-file-size: 1MB
       max-request-size: 5MB
   thymeleaf:
     check-template-location: false

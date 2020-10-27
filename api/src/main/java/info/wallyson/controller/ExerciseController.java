@@ -7,6 +7,8 @@ import info.wallyson.service.ExerciseService;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
+
+import info.wallyson.validations.exerciseimage.ValidExerciseImage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,10 +16,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+@Validated
 @RestController
 @RequestMapping(value = "/api/v1/exercises", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ExerciseController {
@@ -47,10 +51,7 @@ public class ExerciseController {
 
   @PostMapping(value = "images")
   public ResponseEntity<List<ExerciseImageDTO>> uploadImages(
-      @RequestParam(value = "images", required = true) List<MultipartFile> images) {
-
-    // test list size and return 400 if empty
-    // test files extension and return 400 if not image
+      @RequestParam(value = "images", required = true) @ValidExerciseImage List<@Valid MultipartFile> images) {
 
     var uploadedImages = this.exerciseService.storeImages(images);
     var createdImages = uploadedImages.stream().map(this::setImageUrl).collect(Collectors.toList());
