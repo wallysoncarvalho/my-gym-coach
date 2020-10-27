@@ -55,7 +55,7 @@
 /api/.springBeans
 /api/.sts4-cache
 ### IntelliJ IDEA ###
-/api/.idea
+.idea
 /api/*.iws
 /api/*.iml
 /api/*.ipr
