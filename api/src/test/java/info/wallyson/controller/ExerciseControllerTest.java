@@ -159,7 +159,6 @@ class ExerciseControllerTest {
   void should_fail_to_upload_due_to_empty_content() throws Exception {
     var image1 = new MockMultipartFile("images", "image-name.jpg", "image/jpeg", "".getBytes());
 
-    var result =
         this.mockMvc
             .perform(multipart("/api/v1/exercises/images").file(image1))
             .andExpect(status().isBadRequest())
@@ -173,7 +172,6 @@ class ExerciseControllerTest {
   void should_fail_to_upload_due_to_invalid_content_type() throws Exception {
     var image1 = new MockMultipartFile("images", "file.txt", "text/plain", "".getBytes());
 
-    var result =
         this.mockMvc
             .perform(multipart("/api/v1/exercises/images").file(image1))
             .andExpect(status().isBadRequest())
@@ -188,13 +186,11 @@ class ExerciseControllerTest {
     byte[] bytes = new byte[1024 * 1024 * 10];
     var image = new MockMultipartFile("images", "image.jpg", "image/jpeg", bytes);
 
-    var result =
         this.mockMvc
             .perform(multipart("/api/v1/exercises/images").file(image))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.message").exists())
             .andExpect(jsonPath("$.errors").isArray())
-            .andDo(print())
             .andReturn();
   }
 }
