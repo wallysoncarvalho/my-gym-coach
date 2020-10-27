@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 
-import info.wallyson.utils.ValidImage;
+import info.wallyson.validations.exerciseimage.ValidExerciseImage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -51,7 +51,7 @@ public class ExerciseController {
 
   @PostMapping(value = "images")
   public ResponseEntity<List<ExerciseImageDTO>> uploadImages(
-      @RequestParam(value = "images", required = true) @ValidImage List<@Valid MultipartFile> images) {
+      @RequestParam(value = "images", required = true) @ValidExerciseImage List<@Valid MultipartFile> images) {
 
     var uploadedImages = this.exerciseService.storeImages(images);
     var createdImages = uploadedImages.stream().map(this::setImageUrl).collect(Collectors.toList());

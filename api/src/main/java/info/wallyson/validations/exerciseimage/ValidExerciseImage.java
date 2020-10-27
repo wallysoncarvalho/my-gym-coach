@@ -1,4 +1,4 @@
-package info.wallyson.utils;
+package info.wallyson.validations.exerciseimage;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {ImageValidator.class})
-public @interface ValidImage {
+@Constraint(validatedBy = {ExerciseImageTypeValidator.class})
+public @interface ValidExerciseImage {
   String message() default "Invalid image file";
 
   Class<?>[] groups() default {};

@@ -3,6 +3,7 @@ package info.wallyson.controller;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -133,8 +134,7 @@ class ExerciseControllerTest {
   @DisplayName(
       "Should upload JPEG images to local folder. Returns uploaded images and download link.")
   void should_upload_images_to_local_folder() throws Exception {
-    var image1 =
-        new MockMultipartFile("images", "image-name.jpg", "image/jpeg", "somecontent".getBytes());
+    var image1 = new MockMultipartFile("images", "image-name.jpg", "image/jpeg", new byte[1024]);
 
     when(exerciseService.storeImages(List.of(image1)))
         .thenReturn(List.of("91a757a5-e05d-4014-ae92-bfe07c871aaa"));
@@ -179,6 +179,22 @@ class ExerciseControllerTest {
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.message").exists())
             .andExpect(jsonPath("$.errors").isArray())
+            .andReturn();
+  }
+
+  @Test
+  @DisplayName("Should fail to upload file with more than 1MB")
+  void should_fail_to_upload_files_wit_more_than_1MB() throws Exception {
+    byte[] bytes = new byte[1024 * 1024 * 10];
+    var image = new MockMultipartFile("images", "image.jpg", "image/jpeg", bytes);
+
+    var result =
+        this.mockMvc
+            .perform(multipart("/api/v1/exercises/images").file(image))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists())
+            .andExpect(jsonPath("$.errors").isArray())
+            .andDo(print())
             .andReturn();
   }
 }

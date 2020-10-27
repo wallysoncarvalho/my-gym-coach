@@ -19,8 +19,8 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
-    - name: Check Google Java Format
-      run: mvn spotless:check
+    - name: Style Check
+      uses: axel-op/googlejavaformat-action@v3
     - name: Build with Maven
       run: mvn -q package --file pom.xml -Dmaven.test.skip=true
     - name: Run tests

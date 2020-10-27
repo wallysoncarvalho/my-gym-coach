@@ -46,7 +46,7 @@ public class GeneralExceptionHandler {
   @ExceptionHandler({Exception.class})
   public ResponseEntity<ApiError> handleAll(Exception ex, WebRequest request) {
     var apiError =
-        new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "error occurred");
+        new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "");
 
     return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
   }
