@@ -1,3 +1,3 @@
 # MGC
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/b635b9040cd94bf8862207babe7ae70e)](https://www.codacy.com/manual/wallysoncarvalho/MGC?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=wallysoncarvalho/MGC&amp;utm_campaign=Badge_Grade)
-[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/b635b9040cd94bf8862207babe7ae70e)](https://www.codacy.com/manual/wallysoncarvalho/MGC?utm_source=github.com&utm_medium=referral&utm_content=wallysoncarvalho/MGC&utm_campaign=Badge_Coverage)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/eab6d1e186484085bfba6b7b7b8bd2f4)](https://www.codacy.com/gh/wallysoncarvalho/my-gym-coach/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=wallysoncarvalho/my-gym-coach&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/eab6d1e186484085bfba6b7b7b8bd2f4)](https://www.codacy.com/gh/wallysoncarvalho/my-gym-coach/dashboard?utm_source=github.com&utm_medium=referral&utm_content=wallysoncarvalho/my-gym-coach&utm_campaign=Badge_Coverage)

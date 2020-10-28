@@ -1,4 +1,4 @@
-name: Java CI with Maven
+name: MGC API
 
 on:
   workflow_dispatch:
