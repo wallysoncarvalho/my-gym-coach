@@ -2,12 +2,15 @@ package info.wallyson.exception;
 
 import java.util.Collections;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Data
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ApiError {
 
   private HttpStatus status;
@@ -21,10 +24,9 @@ public class ApiError {
     this.errors = errors;
   }
 
-  public ApiError(HttpStatus status, String message, String error) {
+  public ApiError(HttpStatus status, String message) {
     super();
     this.status = status;
     this.message = message;
-    errors = Collections.singletonList(error);
   }
 }

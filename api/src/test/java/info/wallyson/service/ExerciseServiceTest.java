@@ -1,16 +1,10 @@
 package info.wallyson.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import info.wallyson.dto.ExerciseDTO;
 import info.wallyson.entity.Exercise;
 import info.wallyson.exception.ApiException;
 import info.wallyson.factory.ExerciseDTOFactory;
 import info.wallyson.repository.ExerciseRepository;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,6 +17,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @DisplayName("Exercise service tests \uD83D\uDE30!")
 @ExtendWith(SpringExtension.class)
@@ -81,7 +85,7 @@ class ExerciseServiceTest {
   void should_return_empty_list_when_no_image_provided(@TempDir Path tempDir) {
     var service = new ExerciseService(null, tempDir.toString());
     List<MultipartFile> images = List.of();
-    var createdImagesNames = service.storeImages(images);
+    var createdImagesNames = service.storeMultipartFiles(images);
     assertEquals(0, createdImagesNames.size());
   }
 
@@ -95,14 +99,12 @@ class ExerciseServiceTest {
             new MockMultipartFile("image-name.jpg", "content_of_image".getBytes()),
             new MockMultipartFile("image-name.jpg", "content_of_image".getBytes()));
 
-    var createdImagesNames = service.storeImages(images);
+    var createdImagesNames = service.storeMultipartFiles(images);
 
     assertEquals(2, createdImagesNames.size());
 
     createdImagesNames.forEach(
-        name -> {
-          assertTrue(Files.exists(tempDir.resolve(name)));
-        });
+        name -> assertTrue(Files.exists(tempDir.resolve(name))));
   }
 
   @Test
@@ -116,14 +118,12 @@ class ExerciseServiceTest {
             new MockMultipartFile("image-name.jpg", "images content".getBytes()),
             new MockMultipartFile("image-name.jpg", "".getBytes()));
 
-    var createdImagesNames = service.storeImages(images);
+    var createdImagesNames = service.storeMultipartFiles(images);
 
     assertEquals(2, createdImagesNames.size());
 
     createdImagesNames.forEach(
-        name -> {
-          assertTrue(Files.exists(tempDir.resolve(name)));
-        });
+        name -> assertTrue(Files.exists(tempDir.resolve(name))));
   }
 
   @Test
@@ -132,6 +132,30 @@ class ExerciseServiceTest {
     var service = new ExerciseService(null, "//a/dad//asd/invalid/path");
     List<MultipartFile> image =
         List.of(new MockMultipartFile("image-name.jpg", "images content".getBytes()));
-    assertThrows(ApiException.class, () -> service.storeImages(image));
+    assertThrows(ApiException.class, () -> service.storeMultipartFiles(image));
+  }
+
+  @Test
+  @DisplayName("Get file from image dir given it's name")
+  void get_file_from_image_dir(@TempDir Path tempDir) throws IOException {
+    var file = new File(tempDir.toString() + "/arquivo.txt");
+
+    assertTrue(file.createNewFile());
+
+    var service = new ExerciseService(null, tempDir.toString());
+    var fileResource = service.getFileFromImageDir(file.getName());
+
+    assertEquals(file.getName(), fileResource.getFilename());
+    assertTrue(file.exists());
+    assertTrue(fileResource.exists());
+  }
+
+  @Test
+  @DisplayName("Should return invalid resource when file not found")
+  void should_return_invalid_resource_when_file_not_found(@TempDir Path tempDir) {
+    var service = new ExerciseService(null, tempDir.toString());
+    var fileResource = service.getFileFromImageDir(UUID.randomUUID().toString());
+
+    assertFalse(fileResource.exists());
   }
 }

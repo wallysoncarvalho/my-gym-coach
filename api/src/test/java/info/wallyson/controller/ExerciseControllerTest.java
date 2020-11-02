@@ -1,32 +1,42 @@
 package info.wallyson.controller;
 
+import ch.qos.logback.core.util.FileUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import info.wallyson.dto.ExerciseDTO;
+import info.wallyson.dto.ExerciseImageDTO;
+import info.wallyson.exception.ApiException;
+import info.wallyson.factory.ExerciseDTOFactory;
+import info.wallyson.service.ExerciseService;
+import info.wallyson.utils.JsonUtils;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import info.wallyson.dto.ExerciseDTO;
-import info.wallyson.dto.ExerciseImageDTO;
-import info.wallyson.factory.ExerciseDTOFactory;
-import info.wallyson.service.ExerciseService;
-import info.wallyson.utils.JsonUtils;
-import java.util.List;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = ExerciseController.class)
@@ -92,7 +102,8 @@ class ExerciseControllerTest {
 
   @Test
   @DisplayName(
-      "Make POST request to create a new exercise. Returns created exercise with ID and HTTP status 201")
+      "Make POST request to create a new exercise. Returns created exercise with ID and HTTP"
+          + " status 201")
   void should_create_new_exercise_and_return() throws Exception {
     when(exerciseService.createExercise(any(ExerciseDTO.class)))
         .thenReturn(ExerciseDTOFactory.exercise().toEntity());
@@ -115,7 +126,8 @@ class ExerciseControllerTest {
 
   @Test
   @DisplayName(
-      "Returns validation error when trying to create a new exercise with blank name and get HTTP status 400")
+      "Returns validation error when trying to create a new exercise with blank name and get HTTP"
+          + " status 400")
   void should_return_validation_error() throws Exception {
     var result =
         this.mockMvc
@@ -136,7 +148,7 @@ class ExerciseControllerTest {
   void should_upload_images_to_local_folder() throws Exception {
     var image1 = new MockMultipartFile("images", "image-name.jpg", "image/jpeg", new byte[1024]);
 
-    when(exerciseService.storeImages(List.of(image1)))
+    when(exerciseService.storeMultipartFiles(List.of(image1)))
         .thenReturn(List.of("91a757a5-e05d-4014-ae92-bfe07c871aaa"));
 
     var result =
@@ -145,7 +157,7 @@ class ExerciseControllerTest {
             .andExpect(status().isOk())
             .andReturn();
 
-    verify(exerciseService, times(1)).storeImages(List.of(image1));
+    verify(exerciseService, times(1)).storeMultipartFiles(List.of(image1));
     var strResponse = result.getResponse().getContentAsString();
     var imagesList = mapper.readValue(strResponse, ExerciseImageDTO[].class);
 
@@ -159,12 +171,12 @@ class ExerciseControllerTest {
   void should_fail_to_upload_due_to_empty_content() throws Exception {
     var image1 = new MockMultipartFile("images", "image-name.jpg", "image/jpeg", "".getBytes());
 
-        this.mockMvc
-            .perform(multipart("/api/v1/exercises/images").file(image1))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists())
-            .andExpect(jsonPath("$.errors").isArray())
-            .andReturn();
+    this.mockMvc
+        .perform(multipart("/api/v1/exercises/images").file(image1))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").exists())
+        .andExpect(jsonPath("$.errors").isArray())
+        .andReturn();
   }
 
   @Test
@@ -172,12 +184,12 @@ class ExerciseControllerTest {
   void should_fail_to_upload_due_to_invalid_content_type() throws Exception {
     var image1 = new MockMultipartFile("images", "file.txt", "text/plain", "".getBytes());
 
-        this.mockMvc
-            .perform(multipart("/api/v1/exercises/images").file(image1))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists())
-            .andExpect(jsonPath("$.errors").isArray())
-            .andReturn();
+    this.mockMvc
+        .perform(multipart("/api/v1/exercises/images").file(image1))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").exists())
+        .andExpect(jsonPath("$.errors").isArray())
+        .andReturn();
   }
 
   @Test
@@ -186,11 +198,48 @@ class ExerciseControllerTest {
     byte[] bytes = new byte[1024 * 1024 * 10];
     var image = new MockMultipartFile("images", "image.jpg", "image/jpeg", bytes);
 
+    this.mockMvc
+        .perform(multipart("/api/v1/exercises/images").file(image))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").exists())
+        .andExpect(jsonPath("$.errors").isArray())
+        .andReturn();
+  }
+
+  @Test
+  @DisplayName("Should download an image given the image id stored on local storage")
+  void should_download_image_given_id(@TempDir Path tempDir) throws Exception {
+    var fileName = "c0ffddb7-2fe0-4494-a57d-a8f068332668";
+    var file = File.createTempFile(tempDir.toString() + "/" + fileName, "");
+
+    Files.writeString(file.toPath(), "this is the file content");
+
+    when(exerciseService.getFileFromImageDir(file.getName()))
+        .thenReturn(new FileSystemResource(file));
+
+    var response =
         this.mockMvc
-            .perform(multipart("/api/v1/exercises/images").file(image))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists())
-            .andExpect(jsonPath("$.errors").isArray())
+            .perform(get("/api/v1/exercises/images/" + file.getName()))
+            .andExpect(status().isOk())
             .andReturn();
+
+    var fileSize = response.getResponse().getContentLength();
+    var contentDisposition = response.getResponse().getHeader("Content-Disposition");
+
+    assertTrue(fileSize > 0);
+    assertNotNull(contentDisposition);
+    assertTrue(contentDisposition.contains(fileName));
+  }
+
+  @Test
+  @DisplayName("Should return 404 when image doesn't exist")
+  void should_return_404_when_image_doesnt_exist() throws Exception {
+    var fileName = "invalid-file-name";
+    when(exerciseService.getFileFromImageDir(fileName)).thenReturn(new FileSystemResource(""));
+    this.mockMvc
+        .perform(get("/api/v1/exercises/images/" + fileName))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").exists())
+        .andReturn();
   }
 }

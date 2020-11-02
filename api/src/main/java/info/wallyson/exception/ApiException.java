@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 public class ApiException extends RuntimeException {
   private final ApiError apiError;
 
-  private ApiException(ApiError apiError) {
+  public ApiException(ApiError apiError) {
     this.apiError = apiError;
   }
 
@@ -18,7 +18,7 @@ public class ApiException extends RuntimeException {
   }
 
   public static ApiException fromApiError(HttpStatus status, String message, String errors) {
-    var api = new ApiError(status, message, errors);
+    var api = new ApiError(status, message);
     return new ApiException(api);
   }
 }
