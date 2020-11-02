@@ -4,15 +4,20 @@ import info.wallyson.dto.ExerciseDTO;
 import info.wallyson.entity.Exercise;
 import info.wallyson.exception.ApiException;
 import info.wallyson.repository.ExerciseRepository;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -48,21 +53,18 @@ public class ExerciseService {
         "An exercise with the name " + exercise.getName() + " already exists !");
   }
 
-  public List<String> storeImages(List<MultipartFile> images) {
-    // if list is empty return an empty list
-
+  public List<String> storeMultipartFiles(List<MultipartFile> images) {
     return images.stream()
         .filter(mp -> !mp.isEmpty())
-        .map(this::storeFileOnLocation)
+        .map(this::storeMultipartFileOnImageDir)
         .filter(Strings::isNotBlank)
         .collect(Collectors.toList());
   }
 
-  private String storeFileOnLocation(MultipartFile multipartFile) {
+  private String storeMultipartFileOnImageDir(MultipartFile multipartFile) {
     var path = Paths.get(this.imageDir).toAbsolutePath().normalize();
-
     try {
-      var name = UUID.randomUUID().toString();
+      var name = getImageNewName(multipartFile);
       Files.copy(multipartFile.getInputStream(), path.resolve(name));
       return name;
     } catch (IOException e) {
@@ -71,5 +73,23 @@ public class ExerciseService {
           HttpStatus.INTERNAL_SERVER_ERROR,
           "An error occurred on our servers while trying to save the images!");
     }
+  }
+
+  private String getImageNewName(MultipartFile multipartFile) {
+    var originalFileName = multipartFile.getOriginalFilename();
+    String extension = "";
+
+    if (multipartFile.getContentType() != null) {
+      extension = "." + multipartFile.getContentType().split("/")[1];
+    } else if (originalFileName != null && originalFileName.isBlank()) {
+      var splitName = originalFileName.split("\\.");
+      extension = splitName.length > 1 ? "." + splitName[splitName.length - 1] : "";
+    }
+
+    return UUID.randomUUID().toString() + extension;
+  }
+
+  public FileSystemResource getFileFromImageDir(String fileName) {
+    return new FileSystemResource(Path.of(this.imageDir, fileName));
   }
 }
