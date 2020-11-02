@@ -4,14 +4,11 @@ import info.wallyson.dto.ExerciseDTO;
 import info.wallyson.entity.Exercise;
 import info.wallyson.exception.ApiException;
 import info.wallyson.repository.ExerciseRepository;
-
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
