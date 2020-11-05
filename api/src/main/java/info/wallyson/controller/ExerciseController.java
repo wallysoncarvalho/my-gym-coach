@@ -6,6 +6,9 @@ import info.wallyson.entity.Exercise;
 import info.wallyson.exception.ApiException;
 import info.wallyson.service.ExerciseService;
 import info.wallyson.validations.exerciseimage.ValidExerciseImage;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.validation.Valid;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,10 +23,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Validated
 @RestController
