@@ -1,16 +1,9 @@
 package info.wallyson.service;
 
-import info.wallyson.dto.ExerciseDTO;
 import info.wallyson.entity.Exercise;
 import info.wallyson.exception.ApiException;
 import info.wallyson.repository.ExerciseRepository;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +13,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -37,17 +38,17 @@ public class ExerciseService {
     return this.exerciseRepository.findAll(pageable);
   }
 
-  public Exercise createExercise(ExerciseDTO exercise) {
+  public Exercise createExercise(Exercise exercise) {
     var exerciseExists = this.exerciseRepository.existsByName(exercise.getName());
 
     if (!exerciseExists) {
-      return this.exerciseRepository.save(exercise.toEntity());
+      return this.exerciseRepository.save(exercise);
     }
 
     throw ApiException.fromApiError(
         HttpStatus.BAD_REQUEST,
         "Constraint error !",
-        "An exercise with the name " + exercise.getName() + " already exists !");
+        List.of("An exercise with the name " + exercise.getName() + " already exists !"));
   }
 
   public List<String> storeMultipartFiles(List<MultipartFile> images) {

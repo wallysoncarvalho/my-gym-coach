@@ -17,8 +17,8 @@ public class ApiException extends RuntimeException {
     return new ApiException(api);
   }
 
-  public static ApiException fromApiError(HttpStatus status, String message, String errors) {
-    var api = new ApiError(status, message);
+  public static ApiException fromApiError(HttpStatus status, String message, List<String> errors) {
+    var api = new ApiError(status, message, errors);
     return new ApiException(api);
   }
 }

@@ -1,21 +1,12 @@
 package info.wallyson.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import info.wallyson.dto.ExerciseDTO;
 import info.wallyson.dto.ExerciseImageDTO;
+import info.wallyson.entity.Exercise;
 import info.wallyson.factory.ExerciseDTOFactory;
 import info.wallyson.service.ExerciseService;
 import info.wallyson.utils.JsonUtils;
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +23,18 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = ExerciseController.class)
 class ExerciseControllerTest {
@@ -40,19 +43,8 @@ class ExerciseControllerTest {
   @MockBean private ExerciseService exerciseService;
 
   @Test
-  @DisplayName("Make a GET request to exercises endpoint and expect HTTP status 200")
-  void should_get_status_isOk() throws Exception {
-    var result =
-        this.mockMvc
-            .perform(get("/api/v1/exercises").accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn();
-    assertEquals(200, result.getResponse().getStatus());
-  }
-
-  @Test
-  @DisplayName("Should make request without paging params and return page = 0 of size = 10")
-  void should_get_page_with_default_params() throws Exception {
+  @DisplayName("Should get exercise page 0 and max size 10")
+  void should_get_exercise_page_with_default_params() throws Exception {
     var pageable = PageRequest.of(0, 10);
     var exerciseEntityList = ExerciseDTOFactory.dtoToEntity(ExerciseDTOFactory.exerciseList());
     var page =
@@ -71,8 +63,7 @@ class ExerciseControllerTest {
   }
 
   @Test
-  @DisplayName(
-      "Should fall to default params when invalid values for 'page' and 'size' are provided")
+  @DisplayName("Should use default for invalid page and size params")
   void should_return_bad_request_with_invalid_query_params() throws Exception {
     var pageable = PageRequest.of(0, 10);
     var exerciseEntityList = ExerciseDTOFactory.dtoToEntity(ExerciseDTOFactory.exerciseList());
@@ -95,45 +86,43 @@ class ExerciseControllerTest {
   }
 
   @Test
-  @DisplayName(
-      "Make POST request to create a new exercise. Returns created exercise with ID and HTTP"
-          + " status 201")
+  @DisplayName("Should create a new exercise with all information")
   void should_create_new_exercise_and_return() throws Exception {
-    when(exerciseService.createExercise(any(ExerciseDTO.class)))
-        .thenReturn(ExerciseDTOFactory.exercise().toEntity());
-    var result =
-        this.mockMvc
-            .perform(
-                post("/api/v1/exercises")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .characterEncoding("utf-8")
-                    .content(JsonUtils.toJson(ExerciseDTOFactory.exercise()))
-                    .accept(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.name").value(ExerciseDTOFactory.exercise().getName()))
-            .andExpect(jsonPath("$.createdBy").exists())
-            .andReturn();
+    var exercise = ExerciseDTOFactory.exercise();
 
-    verify(exerciseService, times(1)).createExercise(any(ExerciseDTO.class));
-    assertNotNull(result.getResponse());
+    when(exerciseService.createExercise(any(Exercise.class))).thenReturn(exercise.toEntity());
+
+    this.mockMvc
+        .perform(
+            post("/api/v1/exercises")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .characterEncoding("utf-8")
+                .content(JsonUtils.toJson(exercise))
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.name").value(exercise.getName()))
+        .andExpect(jsonPath("$.createdBy").value(exercise.getCreatedBy()))
+        .andExpect(jsonPath("$.images").isArray())
+        .andDo(print())
+        .andReturn();
+
+    verify(exerciseService, times(1)).createExercise(any(Exercise.class));
   }
 
   @Test
-  @DisplayName(
-      "Returns validation error when trying to create a new exercise with blank name and get HTTP"
-          + " status 400")
+  @DisplayName("Should fail to create an exercise without a name and id of creator")
   void should_return_validation_error() throws Exception {
-    var result =
-        this.mockMvc
-            .perform(
-                post("/api/v1/exercises")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .content(JsonUtils.toJson(ExerciseDTO.builder().build()))
-                    .characterEncoding("utf-8")
-                    .accept(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().is(400))
-            .andReturn();
-    assertEquals("{\"name\":\"must not be blank\"}", result.getResponse().getContentAsString());
+    this.mockMvc
+        .perform(
+            post("/api/v1/exercises")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(JsonUtils.toJson(ExerciseDTO.builder().build()))
+                .characterEncoding("utf-8")
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.name").exists())
+        .andExpect(jsonPath("$.createdBy").exists())
+        .andReturn();
   }
 
   @Test
