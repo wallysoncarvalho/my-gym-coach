@@ -54,7 +54,7 @@ class ExerciseServiceTest {
     var exercise = ExerciseDTOFactory.exercise();
     when(this.exerciseRepository.save(any(Exercise.class)))
         .thenReturn(ExerciseDTOFactory.exercise().toEntity());
-    var createdExercise = this.exerciseService.createExercise(exercise);
+    var createdExercise = this.exerciseService.createExercise(exercise.toEntity());
     verify(this.exerciseRepository, times(1)).save(ExerciseDTOFactory.exercise().toEntity());
     assertEquals(exercise.getName(), createdExercise.getName());
   }
@@ -66,7 +66,8 @@ class ExerciseServiceTest {
     when(this.exerciseRepository.save(new Exercise()))
         .thenThrow(ConstraintViolationException.class);
     assertThrows(
-        ConstraintViolationException.class, () -> this.exerciseService.createExercise(exerciseDTO));
+        ConstraintViolationException.class,
+        () -> this.exerciseService.createExercise(exerciseDTO.toEntity()));
     verify(this.exerciseRepository, times(1)).save(new Exercise());
   }
 
@@ -77,8 +78,24 @@ class ExerciseServiceTest {
   void should_throw_error_when_creating_exercise_with_existing_name() {
     var exerciseDTO = ExerciseDTO.builder().name("exercise").build();
     when(this.exerciseRepository.existsByName("exercise")).thenReturn(true);
-    assertThrows(ApiException.class, () -> this.exerciseService.createExercise(exerciseDTO));
+    assertThrows(
+        ApiException.class, () -> this.exerciseService.createExercise(exerciseDTO.toEntity()));
     verify(this.exerciseRepository, times(1)).existsByName("exercise");
+  }
+
+  @Test
+  @DisplayName("Should create an exercise with images")
+  void should_create_exercise_with_images() {
+    var exercise = ExerciseDTOFactory.exercise();
+
+    when(this.exerciseRepository.save(any(Exercise.class)))
+        .thenReturn(ExerciseDTOFactory.exercise().toEntity());
+
+    var createdExercise = this.exerciseService.createExercise(exercise.toEntity());
+
+    verify(this.exerciseRepository, times(1)).save(ExerciseDTOFactory.exercise().toEntity());
+
+    assertEquals(exercise.getName(), createdExercise.getName());
   }
 
   @Test
@@ -104,8 +121,7 @@ class ExerciseServiceTest {
 
     assertEquals(2, createdImagesNames.size());
 
-    createdImagesNames.forEach(
-        name -> assertTrue(Files.exists(tempDir.resolve(name))));
+    createdImagesNames.forEach(name -> assertTrue(Files.exists(tempDir.resolve(name))));
   }
 
   @Test
@@ -123,8 +139,7 @@ class ExerciseServiceTest {
 
     assertEquals(2, createdImagesNames.size());
 
-    createdImagesNames.forEach(
-        name -> assertTrue(Files.exists(tempDir.resolve(name))));
+    createdImagesNames.forEach(name -> assertTrue(Files.exists(tempDir.resolve(name))));
   }
 
   @Test

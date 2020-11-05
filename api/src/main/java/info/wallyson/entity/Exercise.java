@@ -1,20 +1,15 @@
 package info.wallyson.entity;
 
-import java.util.Objects;
-import java.util.UUID;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotBlank;
 import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+
 @Getter
-@Setter
 @Entity
 @Table(
     name = "EXERCISE",
@@ -31,18 +26,27 @@ public class Exercise extends BaseEntity {
   private UUID id;
 
   @NotBlank private String name;
+
   private String description;
-  private String imageUrl;
-  private String createdBy;
+
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "exercise_id")
+  private Set<ExerciseImage> images;
+
+  @NotBlank private String createdBy;
 
   public Exercise() {}
 
   public Exercise(
-      UUID id, @NotBlank String name, String description, String imageUrl, String createdBy) {
+      UUID id,
+      @NotBlank String name,
+      String description,
+      Set<ExerciseImage> images,
+      String createdBy) {
     this.id = id;
     this.name = name;
     this.description = description;
-    this.imageUrl = imageUrl;
+    this.images = images;
     this.createdBy = createdBy;
   }
 
@@ -54,8 +58,8 @@ public class Exercise extends BaseEntity {
     return Objects.equals(getId(), exercise.getId());
   }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(getId());
-  }
+  //  @Override
+  //  public int hashCode() {
+  //    return Objects.hash(getId());
+  //  }
 }

@@ -7,7 +7,6 @@ import info.wallyson.exception.ApiException;
 import info.wallyson.service.ExerciseService;
 import info.wallyson.validations.exerciseimage.ValidExerciseImage;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -46,12 +45,11 @@ public class ExerciseController {
   }
 
   @PostMapping
-  public ResponseEntity<Exercise> createExercise(@RequestBody @Valid ExerciseDTO exercise) {
-    // get the id of the user from security context
+  public ResponseEntity<ExerciseDTO> createExercise(@RequestBody @Valid ExerciseDTO exercise) {
     exercise.setCreatedBy("1fa67471-fc71-4a13-9d87-15d51f932bb2");
-
-    var createdExercise = this.exerciseService.createExercise(exercise);
-    return ResponseEntity.status(201).body(createdExercise);
+    var exerciseEntity = exercise.toEntity();
+    var createdExercise = this.exerciseService.createExercise(exerciseEntity);
+    return ResponseEntity.status(201).body(ExerciseDTO.fromEntity(createdExercise));
   }
 
   @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
