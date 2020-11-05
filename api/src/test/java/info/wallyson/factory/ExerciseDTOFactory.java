@@ -2,8 +2,6 @@ package info.wallyson.factory;
 
 import info.wallyson.dto.ExerciseDTO;
 import info.wallyson.entity.Exercise;
-import info.wallyson.entity.ExerciseImage;
-
 import java.util.*;
 import java.util.stream.Collectors;
 

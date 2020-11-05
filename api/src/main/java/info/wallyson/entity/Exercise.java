@@ -1,13 +1,12 @@
 package info.wallyson.entity;
 
-import lombok.Getter;
-import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import lombok.Getter;
+import org.hibernate.annotations.GenericGenerator;
 
 @Getter
 @Entity

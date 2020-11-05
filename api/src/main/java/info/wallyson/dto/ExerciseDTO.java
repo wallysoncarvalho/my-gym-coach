@@ -2,12 +2,11 @@ package info.wallyson.dto;
 
 import info.wallyson.entity.Exercise;
 import info.wallyson.entity.ExerciseImage;
-import lombok.Builder;
-import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotBlank;
+import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder

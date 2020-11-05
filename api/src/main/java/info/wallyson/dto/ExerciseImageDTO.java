@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExerciseImageDTO {
-	private String name;
-	private String url;
+  private String name;
+  private String url;
 }

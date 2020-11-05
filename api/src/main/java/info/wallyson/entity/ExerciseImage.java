@@ -1,12 +1,11 @@
 package info.wallyson.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @Entity
 @Table(name = "exercise_images")
