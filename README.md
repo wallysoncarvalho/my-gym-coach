@@ -32,13 +32,16 @@ I created this project mainly to practice a little of the technologies mentioned
 - Spring Boot (webmvc)
 - Spring JPA + Hibernate
 - Java 11
+- Keycloak
 - Angular 10
+- Typescript
 - Docker + docker-compose
 - Mockito
 - Junit 5
 - SQL
 - PostgreSQL
 - Postman API testing
+- Creation of CI/CD pipeline
 
 Another very important use for this project is to improve my knowlege on testing spring boot API's: unit, integration and automated tests.
 
