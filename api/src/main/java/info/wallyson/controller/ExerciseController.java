@@ -6,9 +6,7 @@ import info.wallyson.entity.Exercise;
 import info.wallyson.exception.ApiException;
 import info.wallyson.service.ExerciseService;
 import info.wallyson.validations.exerciseimage.ValidExerciseImage;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +22,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Validated
 @RestController
 @RequestMapping(value = "/api/v1/exercises")
@@ -32,6 +34,20 @@ public class ExerciseController {
 
   public ExerciseController(ExerciseService exerciseService) {
     this.exerciseService = exerciseService;
+  }
+
+  @GetMapping("{id}")
+  public ResponseEntity<ExerciseDTO> getExerciseById(
+      @PathVariable(value = "id", required = true) String id) {
+
+    var exercise = this.exerciseService.getExercise(id);
+
+    if (exercise.isPresent()) {
+      var exerciseDto = ExerciseDTO.fromEntity(exercise.get());
+      return ResponseEntity.ok(exerciseDto);
+    }
+
+    throw ApiException.fromApiError(HttpStatus.NOT_FOUND, "No exercise found for the id " + id);
   }
 
   @GetMapping
@@ -49,6 +65,18 @@ public class ExerciseController {
     var exerciseEntity = exercise.toEntity();
     var createdExercise = this.exerciseService.createExercise(exerciseEntity);
     return ResponseEntity.status(201).body(ExerciseDTO.fromEntity(createdExercise));
+  }
+
+  @DeleteMapping("{id}")
+  public ResponseEntity<ExerciseDTO> deleteExerciseById(
+      @PathVariable(value = "id", required = true) String id) {
+    var deletedExercise = this.exerciseService.deleteExercise(id);
+
+    if (deletedExercise.isPresent()) {
+      return ResponseEntity.status(200).body(ExerciseDTO.fromEntity(deletedExercise.get()));
+    }
+
+    throw ApiException.fromApiError(HttpStatus.NOT_FOUND, "No exercise found for the id " + id);
   }
 
   @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

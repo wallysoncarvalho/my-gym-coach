@@ -3,7 +3,6 @@ package info.wallyson.service;
 import info.wallyson.entity.Exercise;
 import info.wallyson.exception.ApiException;
 import info.wallyson.repository.ExerciseRepository;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -49,6 +49,16 @@ public class ExerciseService {
         HttpStatus.BAD_REQUEST,
         "Constraint error !",
         List.of("An exercise with the name " + exercise.getName() + " already exists !"));
+  }
+
+  public Optional<Exercise> getExercise(String id) {
+    return this.exerciseRepository.findById(id);
+  }
+
+  public Optional<Exercise> deleteExercise(String id) {
+    var exercise = this.exerciseRepository.findById(id);
+    exercise.ifPresent(e -> this.exerciseRepository.deleteById(id));
+    return exercise;
   }
 
   public List<String> storeMultipartFiles(List<MultipartFile> images) {

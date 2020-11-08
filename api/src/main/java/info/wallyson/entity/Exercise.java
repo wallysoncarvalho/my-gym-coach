@@ -1,6 +1,7 @@
 package info.wallyson.entity;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+@Setter
 @Getter
 @Entity
 @Table(
@@ -33,6 +35,10 @@ public class Exercise extends BaseEntity {
   @JoinColumn(name = "exercise_id")
   private Set<ExerciseImage> images;
 
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "exercise_id")
+  private Set<ExerciseMuscle> muscles;
+
   @NotBlank private String createdBy;
 
   public Exercise() {}
@@ -42,13 +48,17 @@ public class Exercise extends BaseEntity {
       @NotBlank String name,
       String description,
       Set<ExerciseImage> images,
+      Set<ExerciseMuscle> muscles,
       String createdBy) {
     this.id = id;
     this.name = name;
     this.description = description;
     this.images = images;
+    this.muscles = muscles;
     this.createdBy = createdBy;
   }
+
+
 
   @Override
   public boolean equals(Object o) {
@@ -58,8 +68,8 @@ public class Exercise extends BaseEntity {
     return Objects.equals(getId(), exercise.getId());
   }
 
-  //  @Override
-  //  public int hashCode() {
-  //    return Objects.hash(getId());
-  //  }
+    @Override
+    public int hashCode() {
+      return Objects.hash(getId());
+    }
 }

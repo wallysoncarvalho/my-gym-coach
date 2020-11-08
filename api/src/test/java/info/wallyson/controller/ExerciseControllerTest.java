@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import info.wallyson.dto.ExerciseDTO;
 import info.wallyson.dto.ExerciseImageDTO;
 import info.wallyson.entity.Exercise;
-import info.wallyson.factory.ExerciseDTOFactory;
+import info.wallyson.factory.ExerciseMother;
 import info.wallyson.service.ExerciseService;
 import info.wallyson.utils.JsonUtils;
 import org.junit.jupiter.api.DisplayName;
@@ -27,6 +27,8 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -46,9 +48,9 @@ class ExerciseControllerTest {
   @DisplayName("Should get exercise page 0 and max size 10")
   void should_get_exercise_page_with_default_params() throws Exception {
     var pageable = PageRequest.of(0, 10);
-    var exerciseEntityList = ExerciseDTOFactory.dtoToEntity(ExerciseDTOFactory.exerciseList());
+    var exerciseEntityList = ExerciseMother.dtoToEntity(ExerciseMother.exerciseList());
     var page =
-        new PageImpl<>(exerciseEntityList, pageable, ExerciseDTOFactory.exerciseList().size());
+        new PageImpl<>(exerciseEntityList, pageable, ExerciseMother.exerciseList().size());
     when(exerciseService.getExercises(any(Pageable.class))).thenReturn(page);
     var result =
         this.mockMvc
@@ -66,9 +68,9 @@ class ExerciseControllerTest {
   @DisplayName("Should use default for invalid page and size params")
   void should_return_bad_request_with_invalid_query_params() throws Exception {
     var pageable = PageRequest.of(0, 10);
-    var exerciseEntityList = ExerciseDTOFactory.dtoToEntity(ExerciseDTOFactory.exerciseList());
+    var exerciseEntityList = ExerciseMother.dtoToEntity(ExerciseMother.exerciseList());
     var page =
-        new PageImpl<>(exerciseEntityList, pageable, ExerciseDTOFactory.exerciseList().size());
+        new PageImpl<>(exerciseEntityList, pageable, ExerciseMother.exerciseList().size());
     when(exerciseService.getExercises(any(Pageable.class))).thenReturn(page);
     var result =
         this.mockMvc
@@ -88,7 +90,7 @@ class ExerciseControllerTest {
   @Test
   @DisplayName("Should create a new exercise with all information")
   void should_create_new_exercise_and_return() throws Exception {
-    var exercise = ExerciseDTOFactory.exercise();
+    var exercise = ExerciseMother.exercise();
 
     when(exerciseService.createExercise(any(Exercise.class))).thenReturn(exercise.toEntity());
 
@@ -103,10 +105,81 @@ class ExerciseControllerTest {
         .andExpect(jsonPath("$.name").value(exercise.getName()))
         .andExpect(jsonPath("$.createdBy").value(exercise.getCreatedBy()))
         .andExpect(jsonPath("$.images").isArray())
-        .andDo(print())
+        .andExpect(jsonPath("$.muscles").isArray())
         .andReturn();
 
     verify(exerciseService, times(1)).createExercise(any(Exercise.class));
+  }
+
+  @Test
+  @DisplayName("Should get an exercise by its id")
+  void should_get_exercise_by_id() throws Exception {
+    var exercise = ExerciseMother.exercise();
+    when(exerciseService.getExercise(exercise.getId()))
+        .thenReturn(Optional.of(exercise.toEntity()));
+
+    this.mockMvc
+        .perform(
+            get("/api/v1/exercises/" + exercise.getId()).accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name").value(exercise.getName()))
+        .andExpect(jsonPath("$.createdBy").value(exercise.getCreatedBy()))
+        .andExpect(jsonPath("$.images").isArray())
+        .andExpect(jsonPath("$.muscles").isArray())
+        .andReturn();
+
+    verify(exerciseService, times(1)).getExercise(exercise.getId());
+  }
+
+  @Test
+  @DisplayName("Should return not found when theres no exercise with provided id")
+  void should_not_find_exercise() throws Exception {
+    var id = "unknown id";
+    when(exerciseService.getExercise(id)).thenReturn(Optional.empty());
+
+    this.mockMvc
+        .perform(get("/api/v1/exercises/" + id).accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.message").exists())
+        .andReturn();
+
+    verify(exerciseService, times(1)).getExercise(id);
+  }
+
+  @Test
+  @DisplayName("Should delete an exercise by its id")
+  void should_delete_exercise() throws Exception {
+    var exercise = ExerciseMother.exercise();
+    when(exerciseService.deleteExercise(exercise.getId()))
+        .thenReturn(Optional.of(exercise.toEntity()));
+
+    this.mockMvc
+        .perform(
+            delete("/api/v1/exercises/" + exercise.getId())
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name").value(exercise.getName()))
+        .andExpect(jsonPath("$.createdBy").value(exercise.getCreatedBy()))
+        .andExpect(jsonPath("$.images").isArray())
+        .andExpect(jsonPath("$.muscles").isArray())
+        .andReturn();
+
+    verify(exerciseService, times(1)).deleteExercise(exercise.getId());
+  }
+
+  @Test
+  @DisplayName("Should fail to delete by id a nonexistent exercise")
+  void should_fail_to_delete_nonexistent_exercise() throws Exception {
+    var id = UUID.randomUUID().toString();
+    when(exerciseService.deleteExercise(id)).thenReturn(Optional.empty());
+
+    this.mockMvc
+        .perform(delete("/api/v1/exercises/" + id).accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.message").exists())
+        .andReturn();
+
+    verify(exerciseService, times(1)).deleteExercise(id);
   }
 
   @Test
