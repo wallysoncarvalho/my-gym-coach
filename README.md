@@ -1,22 +1,33 @@
-<div style="text-align:center">
-
-![LOGO](mgc-logo.png)
+<p align="center">
+<img src="mgc-logo.png" alt="MGC Logo">
+</p>
 
 </br>
 </br>
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/eab6d1e186484085bfba6b7b7b8bd2f4)](https://www.codacy.com/gh/wallysoncarvalho/my-gym-coach/dashboard?utm_source=github.com&utm_medium=referral&utm_content=wallysoncarvalho/my-gym-coach&utm_campaign=Badge_Grade)
-[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/eab6d1e186484085bfba6b7b7b8bd2f4)](https://www.codacy.com/gh/wallysoncarvalho/my-gym-coach/dashboard?utm_source=github.com&utm_medium=referral&utm_content=wallysoncarvalho/my-gym-coach&utm_campaign=Badge_Coverage)
-[![YourActionName Actions Status](https://github.com/wallysoncarvalho/my-gym-coach/workflows/MGC%20API/badge.svg)](https://github.com/wallysoncarvalho/my-gym-coach/actions)
+<p align="center">
 
-</div>
+<a href="https://www.codacy.com/gh/wallysoncarvalho/my-gym-coach/dashboard?utm_source=github.com&utm_medium=referral&utm_content=wallysoncarvalho/my-gym-coach&utm_campaign=Badge_Grade">
+    <img src="https://app.codacy.com/project/badge/Grade/eab6d1e186484085bfba6b7b7b8bd2f4" />
+  </a>
+
+  <a href="https://www.codacy.com/gh/wallysoncarvalho/my-gym-coach/dashboard?utm_source=github.com&utm_medium=referral&utm_content=wallysoncarvalho/my-gym-coach&utm_campaign=Badge_Coverage">
+    <img src="https://app.codacy.com/project/badge/Coverage/eab6d1e186484085bfba6b7b7b8bd2f4" />
+  </a>
+
+<a href="https://github.com/wallysoncarvalho/my-gym-coach/actions">
+    <img src="https://github.com/wallysoncarvalho/my-gym-coach/workflows/MGC%20API/badge.svg" />
+  </a>
+
+
+</p>
 
 </br>
 </br>
 
 # <b>Introduction</b>
 
->This is a personal project so i can keep practicing some technologies/concepts that i'm learning.
+> This is a personal project so i can keep practicing some technologies/concepts that i'm learning.
 
 This project aims to provide means for a gym coach to manage the training routines of an athlete by creating workout plans that are valid through a period of time. Each workout plan will contain all days of the week where each day can contain a set of exercises and informations on how to perform them.
 
@@ -51,4 +62,3 @@ Another very important use for this project is to improve my knowlege on testing
 # <b>Runnig this project</b>
 
 `docker-compose up`
-
