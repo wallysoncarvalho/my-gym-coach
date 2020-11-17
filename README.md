@@ -25,9 +25,19 @@
 </br>
 </br>
 
+# <b>Table of contents</b>
+- [WIKI](https://github.com/wallysoncarvalho/my-gym-coach/wiki/Project-description)
+- [Introduction](#introduction)
+- [Project goals](#project-goals)
+- [Running the project](#runnig-the-project)
+
+
+</br>
+</br>
+
 # <b>Introduction</b>
 
-> This is a personal project so i can keep practicing some technologies/concepts that i'm learning.
+> This is a personal project so i can keep practicing some technologies/concepts that i'm learning. It's on early stages, so most things arent working properly for now.
 
 This project aims to provide means for a gym coach to manage the training routines of an athlete by creating workout plans that are valid through a period of time. Each workout plan will contain all days of the week where each day can contain a set of exercises and informations on how to perform them.
 
@@ -59,6 +69,6 @@ Another very important use for this project is to improve my knowlege on testing
 </br>
 </br>
 
-# <b>Runnig this project</b>
+# <b>Runnig the project</b>
 
 `docker-compose up`
